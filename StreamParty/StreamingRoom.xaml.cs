@@ -4136,12 +4136,14 @@ namespace FilmParty
                 if (writting && string.IsNullOrWhiteSpace(SendText.Text) && !search && !sendUrl)
                 {
                     writting = false;
-                    await Task.Run(() => MqttConnection.MqttPublish(MqttConnection.UserName + "/feeds/" + MqttConnection.ChatRoomNameKey, MqttConnection.NickName + "_STOP-TYPING"));
+                    if (MqttConnection.IsSolace)
+                        await Task.Run(() => MqttConnection.MqttPublish(MqttConnection.UserName + "/feeds/" + MqttConnection.ChatRoomNameKey, MqttConnection.NickName + "_STOP-TYPING"));
                 }
                 else if (!writting && !string.IsNullOrWhiteSpace(SendText.Text) && !search && !sendUrl)
                 {
                     writting = true;
-                    await Task.Run(() => MqttConnection.MqttPublish(MqttConnection.UserName + "/feeds/" + MqttConnection.ChatRoomNameKey, MqttConnection.NickName + "_START-TYPING"));
+                    if (MqttConnection.IsSolace)
+                        await Task.Run(() => MqttConnection.MqttPublish(MqttConnection.UserName + "/feeds/" + MqttConnection.ChatRoomNameKey, MqttConnection.NickName + "_START-TYPING"));
                 }
             }
         }

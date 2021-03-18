@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\giuse\Desktop\StreamParty\StreamParty\obj\Debug\
+C:\Users\giuse\Documents\GitHub\StreamParty_SourceCode\StreamParty\obj\Debug\
 StreamParty
 none
 false
 DEBUG;TRACE
-C:\Users\giuse\Desktop\StreamParty\StreamParty\App.xaml
+C:\Users\giuse\Documents\GitHub\StreamParty_SourceCode\StreamParty\App.xaml
 41636779769
 
-18-2065355907
-83-1164418643
+14-937500804
+83257089164
 MyRoom.xaml;RoomMaker.xaml;StreamingRoom.xaml;MainWindow.xaml;
 
-True
+False
 
