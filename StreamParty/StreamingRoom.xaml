@@ -1,0 +1,578 @@
+﻿<Window x:Class="FilmParty.StreamingRoom"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}"
+        Title="Stream Party" Height="670" Width="1182" MinHeight="670" MinWidth="1182" WindowStartupLocation="CenterScreen" Closing="Window_Closing" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" Closed="Window_Closed">
+
+    <Window.Resources>
+        <Storyboard x:Key="DotsTyping" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="rectangle8">
+                <EasingDoubleKeyFrame KeyTime="0" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="rectangle8">
+                <EasingDoubleKeyFrame KeyTime="0" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="rectangle9">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.21" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.36" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.51" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="rectangle9">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.21" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.36" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.51" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="rectangle10">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.48" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.63" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.78" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="rectangle10">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.48" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.63" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.78" Value="4"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="WritingUp">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="isWriting">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="24"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="WritingDown">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="isWriting">
+                <EasingDoubleKeyFrame KeyTime="0" Value="24"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="ReplayUp">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="ResponseContainer" From="0" To="50">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="ReplayDown">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="ResponseContainer" From="50" To="0">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="LinkListUp">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="0" To="120" Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="LinkListDown">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="120" To="0" Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="FilmLinkListUp">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="0" To="250">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="FilmLinkListDown">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="250" To="0">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SeriesMiniUp">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="30" To="250">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SeriesMiniDown">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="250" To="30">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="CollectingLabelShow">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="CollectingLabelContainer" From="0" To="125">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <Storyboard x:Key="CollectingLabelHide">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="CollectingLabelContainer" From="125" To="0">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        
+        
+        
+        
+        
+        
+        
+
+        <Storyboard x:Key="TitleOpacityShow">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleVideo" From="0" To="1" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="TitleOpacityHide">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleVideo" From="1" To="0" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="InfoTxtOpacityShow">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TextLink" From="0" To="1" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="InfoTxtOpacityHide">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TextLink" From="1" To="0" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="TitleGridHeightShow">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="TitleGrid" From="0" To="30" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="TitleGridHeightHide">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="TitleGrid" From="30" To="0" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="InfoTxtGridHeightShow">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="InfoTxtGrid" From="0" To="20" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="InfoTxtGridHeightHide">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="InfoTxtGrid" From="20" To="0" Duration="0:0:1.3">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SeasonEpTxtGridWidthShow">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="SeasonEpisodeGrid" From="0" To="55" Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SeasonEpTxtGridWidthHide">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="SeasonEpisodeGrid" From="55" To="0" Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="MiniControllPanellGridWidthShow">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="MiniControllPanellGrid" From="0" To="62" Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="MiniControllPanellGridWidthHide">
+            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="MiniControllPanellGrid" From="62" To="0" Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SeriesMiniHide">
+            <DoubleAnimation Storyboard.TargetProperty="Height" Storyboard.TargetName="LinkStreamContainer" From="30" To="0">
+                <DoubleAnimation.EasingFunction>
+                    <QuinticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+
+
+
+
+
+
+        <Storyboard x:Key="ControlPannelDown">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="ControlPannel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="110"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="14"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="ControlPannelUp">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="ControlPannel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="14"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="110"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="Scroll" RepeatBehavior="Forever">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Storyboard.TargetName="BtnExpandReduce">
+                <EasingColorKeyFrame KeyTime="0" Value="#FF17212B"/>
+                <EasingColorKeyFrame KeyTime="0:0:1" Value="#FFFFFFFF"/>
+                <EasingColorKeyFrame KeyTime="0:0:2" Value="#FF17212B"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+
+    </Window.Resources>
+
+    <materialDesign:DrawerHost BorderBrush="{DynamicResource MaterialDesignDivider}" Margin="0,0,0,0">
+        <materialDesign:DrawerHost.RightDrawerContent>
+            <Grid Name="DrawerHostContent" Background="#FF17212B" RenderTransformOrigin="0.5,0.5" Width="230">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+
+                <TextBlock Name="NickNameTxt" Grid.Row="0" Margin="15,5,0,5" Style="{StaticResource MaterialDesignHeadline2TextBlock}" Foreground="White" FontSize="30"/>
+
+                <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" Grid.Row="1" Foreground="White" FontSize="18" Margin="15,10,0,10"><Run Text="Online users"/></TextBlock>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Name="ChipUser" Grid.Row="0" CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                        <Canvas x:Name="ChipUserContainer"/>
+                    </ScrollViewer>
+
+                    <Separator Grid.Row="1" Foreground="#212121"/>
+                    <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" Grid.Row="2" Foreground="White" FontSize="15" Margin="15,10,0,10"><Run Text="Solace tools"/></TextBlock>
+                    <Button x:Name="MySolaceRoomBtn" Grid.Row="3" IsEnabled="False" Foreground="#FFFFFF" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="Update key End-to-End" ToolTip="MaterialDesignFlatButton" Height="50" VerticalAlignment="Bottom" Click="MySolaceRoomBtn_Click" MouseEnter="MySolaceRoomBtn_MouseEnter" MouseLeave="MySolaceRoomBtn_MouseLeave"/>
+                    <Button x:Name="ShareSolaceRoomBtn" Grid.Row="4" IsEnabled="False" Foreground="#FFFFFF" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="Copy link room" ToolTip="MaterialDesignFlatButton" Height="50" VerticalAlignment="Bottom" Click="ShareSolaceRoomBtn_Click" MouseEnter="ShareSolaceRoomBtn_MouseEnter" MouseLeave="ShareSolaceRoomBtn_MouseLeave"/>
+                    <Separator Grid.Row="5" Foreground="#212121"/>
+                    <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" Grid.Row="6" Foreground="White" FontSize="15" Margin="15,10,0,10"><Run Text="Adafruit tools"/></TextBlock>
+                    <Button x:Name="MyRoomBtn" Grid.Row="7" Foreground="#FFFFFF" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="My room" ToolTip="MaterialDesignFlatButton" Height="50" VerticalAlignment="Bottom" Click="MyRoomBtn_Click" MouseEnter="MyRoomBtn_MouseEnter" MouseLeave="MyRoomBtn_MouseLeave"/>
+                    <Button x:Name="RoomMakerBtn" Grid.Row="8" Foreground="#FFFFFF" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="Make a room" ToolTip="MaterialDesignFlatButton" Height="50" VerticalAlignment="Bottom" Click="RoomMakerBtn_Click" MouseEnter="RoomMakerBtn_MouseEnter" MouseLeave="RoomMakerBtn_MouseLeave"/>
+                    <Separator Grid.Row="9" Foreground="#212121"/>
+                    <Button x:Name="UpdateBtn" Grid.Row="10" Foreground="#FFFFFF" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="Check Update" ToolTip="MaterialDesignFlatButton" Height="50" VerticalAlignment="Bottom" Click="UpdateBtn_Click" MouseEnter="UpdateBtn_MouseEnter" MouseLeave="UpdateBtn_MouseLeave"/>
+                    <Button x:Name="LogOutBtn" Grid.Row="11" Foreground="#FFFFFF" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" Content="Log Out" ToolTip="MaterialDesignFlatButton" Height="50" Click="LogOutBtn_Click"  MouseEnter="LogOutBtn_MouseEnter" MouseLeave="LogOutBtn_MouseLeave" VerticalAlignment="Bottom"/>
+                </Grid>
+
+            </Grid>
+        </materialDesign:DrawerHost.RightDrawerContent>
+
+        <Grid Background="#FF0E1621">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Name="MediaPlayerContainer" Grid.Column="0" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Name="SuppressChat" Grid.Row="0" Height="0">
+                    <Button x:Name="ToggleResizeChatSuppress" Width="30" Margin="0,7,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" materialDesign:ButtonAssist.CornerRadius="15" Padding="0" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Height="30" Click="ToggleResizeChatSuppress_Click" MouseEnter="ToggleResizeChatSuppress_MouseEnter" MouseLeave="ToggleResizeChatSuppress_MouseLeave">
+                        <materialDesign:PackIcon Kind="Chat" Height="20" Width="20" />
+                    </Button>
+                </Grid>
+
+                <Grid Name="Player" Grid.Row="1" Height="Auto" Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Name="VideoViewGrid" Grid.Row="0" Height="Auto">
+                        <vlc:VideoView x:Name="VideoView" Visibility="Visible"/>
+                    </Grid>
+
+                    <materialDesign:Card Name="ControlPannel" Grid.Row="1" Background="#0E1621" Foreground="White" UniformCornerRadius="2" materialDesign:ShadowAssist.ShadowDepth="Depth0" Height="110" VerticalAlignment="Bottom">
+                        <Grid>
+                            <Button x:Name="ToggleResizeControll" Width="50" materialDesign:ButtonAssist.CornerRadius="3" Padding="0" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" VerticalAlignment="Top" Height="12" MouseEnter="ToggleResizeControll_MouseEnter" MouseLeave="ToggleResizeControll_MouseLeave" Click="ToggleResizeControll_Click" >
+                                <materialDesign:PackIcon x:Name="ToggleArrowControl" Kind="KeyboardArrowDown" Margin="0,-2,0,0" Height="18" Width="22" />
+                            </Button>
+                            <Grid Name="SubControlPannel" Background="#FF0E1621" Margin="0,18,0,0">
+                                <Grid x:Name="AdminControl" Margin="10,14,60,7">
+                                    <Slider x:Name="ProgressTimeline" VerticalContentAlignment="Center" TickFrequency="1" IsEnabled="False" Foreground="White" Orientation="Horizontal" Minimum="0" Maximum="180033" Value="0" Margin="50,0,0,47" Height="20" VerticalAlignment="Bottom" PreviewMouseLeftButtonUp="ProgressTimeline_PreviewMouseLeftButtonUp" PreviewMouseLeftButtonDown="ProgressTimeline_PreviewMouseLeftButtonDown" ValueChanged="ProgressTimeline_ValueChanged"/>
+                                    <Grid Margin="0,27,7,0">
+                                        <Button x:Name="BtnPlay" Padding="0" HorizontalContentAlignment="Center" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="BtnPlay_Click" Width="60" Height="40" MouseEnter="BtnPlay_MouseEnter" MouseLeave="BtnPlay_MouseLeave">
+                                            <materialDesign:PackIcon HorizontalAlignment="Left" x:Name="IcnBtnPlay" Kind="Play" Width="36" Height="34" />
+                                        </Button>
+                                        <Button x:Name="BtnStop" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="65,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="BtnStop_Click" Height="40" Width="52" MouseEnter="BtnStop_MouseEnter" MouseLeave="BtnStop_MouseLeave">
+                                            <materialDesign:PackIcon Kind="Stop" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnTenMinus" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="122,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="40" Width="52" MouseEnter="BtnTenMinus_MouseEnter" MouseLeave="BtnTenMinus_MouseLeave" Click="BtnTenMinus_Click">
+                                            <materialDesign:PackIcon Kind="Rewind10" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnTenPlus" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="179,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="40" Width="52" MouseEnter="BtnTenPlus_MouseEnter" MouseLeave="BtnTenPlus_MouseLeave" Click="BtnTenPlus_Click">
+                                            <materialDesign:PackIcon Kind="FastForward10" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnSearch" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Width="52" MouseEnter="BtnSearch_MouseEnter" MouseLeave="BtnSearch_MouseLeave" Click="BtnSearch_Click" Margin="0,0,57,0">
+                                            <materialDesign:PackIcon Kind="MovieSearch" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnSync" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="0,0,171,0" VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Width="52" Click="BtnSync_Click" MouseEnter="BtnSync_MouseEnter" MouseLeave="BtnSync_MouseLeave">
+                                            <materialDesign:PackIcon Kind="Sync" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnUpdateUrl" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" VerticalAlignment="Bottom" Height="40" Click="BtnUpdateUrl_Click" HorizontalAlignment="Right" Width="52" MouseEnter="BtnUpdateUrl_MouseEnter" MouseLeave="BtnUpdateUrl_MouseLeave" Margin="0,0,114,0">
+                                            <materialDesign:PackIcon Kind="LinkVariantPlus" Height="32" Width="20" />
+                                        </Button>
+                                        <Button x:Name="BtnNetflix" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" VerticalAlignment="Bottom" Height="40" HorizontalAlignment="Right" Width="52" Click="BtnNetflix_Click" MouseEnter="BtnNetflix_MouseEnter" MouseLeave="BtnNetflix_MouseLeave">
+                                            <materialDesign:PackIcon Kind="Netflix" Height="32" Width="20" />
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                                <TextBlock x:Name="CurrentTime" Style="{StaticResource MaterialDesignBody2TextBlock}" HorizontalAlignment="Left" TextAlignment="Left" FontSize="11" Height="12" VerticalAlignment="Bottom" Margin="10,0,0,58" Width="45"><Run Text="00:00:00"/></TextBlock>
+                                <Button x:Name="BtnMute" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="360,0,0,7" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="40" Width="52" MouseEnter="BtnMute_MouseEnter" MouseLeave="BtnMute_MouseLeave" Click="BtnMute_Click">
+                                    <materialDesign:PackIcon x:Name="IcnBtnMute" Kind="Audio" Height="32" Width="20" />
+                                </Button>
+                                <Slider x:Name="ProgVolume" Foreground="White" TickFrequency="1" Orientation="Horizontal" Minimum="0" Maximum="125" Value="70" Margin="417,0,0,17" HorizontalAlignment="Left" Width="80" ValueChanged="ProgVolume_ValueChanged" Height="20" VerticalAlignment="Bottom" />
+                                <Button x:Name="BtnExpandReduce" Padding="0" Foreground="White" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="0,0,10,7" VerticalAlignment="Bottom" Width="52" HorizontalAlignment="Right" Click="BtnExpandReduce_Click" Height="40" MouseEnter="BtnExpandReduce_MouseEnter" MouseLeave="BtnExpandReduce_MouseLeave">
+                                    <materialDesign:PackIcon x:Name="IcnExpandReduce" Kind="ArrowExpandAll" />
+                                </Button>
+                                <ProgressBar x:Name="BufferingCircle" Foreground="White" VerticalAlignment="Bottom" Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="False" Height="40" Width="40" Margin="0,0,296,7" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TotalTime" Style="{StaticResource MaterialDesignBody2TextBlock}" HorizontalAlignment="Right" TextAlignment="Left" FontSize="11" Height="12" VerticalAlignment="Bottom" Margin="0,0,0,58" Width="51"><Run Text="00:00:00"/></TextBlock>
+                                <Button x:Name="BtnSubtitle" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="246,0,0,7" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="40" Width="52" MouseEnter="BtnSubtitle_MouseEnter" MouseLeave="BtnSubtitle_MouseLeave" Click="BtnSubtitle_Click">
+                                    <materialDesign:PackIcon Kind="Subtitles" Height="32" Width="20" />
+                                </Button>
+                                <Button x:Name="BtnLanguage" Foreground="White" IsEnabled="False" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Margin="303,0,0,7" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="40" Width="52" MouseEnter="BtnLanguage_MouseEnter" MouseLeave="BtnLanguage_MouseLeave" Click="BtnLanguage_Click">
+                                    <materialDesign:PackIcon Kind="Language" Height="32" Width="20" />
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </materialDesign:Card>
+                    
+                </Grid>
+            </Grid>
+
+            <materialDesign:Card Name="ChatRoom" Grid.Column="1" Width="320" Padding="0,8,0,0" Foreground="White" Background="#FF0E1621" UniformCornerRadius="0" materialDesign:ShadowAssist.ShadowDepth="Depth0" HorizontalAlignment="Right" >
+
+                <Grid Name="SubChatRoom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="0"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="8,0,8,5">
+                        <Button x:Name="ResizeChat" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" materialDesign:ButtonAssist.CornerRadius="15" Padding="0" Foreground="White" IsEnabled="True" materialDesign:RippleAssist.Feedback="#212121" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="MaterialDesignFlatButton" Height="30" MouseEnter="ToggleResizeChat_MouseEnter" MouseLeave="ToggleResizeChat_MouseLeave" Click="ToggleResizeChat_Click" >
+                            <materialDesign:PackIcon x:Name="ToggleArrowChat" Kind="ArrowRight" Height="20" Width="20" />
+                        </Button>
+                        <TextBlock x:Name="ChatroomTxt" Style="{StaticResource MaterialDesignHeadline2TextBlock}" HorizontalAlignment="Left" TextAlignment="Left" FontSize="25" Height="30" VerticalAlignment="Top" Margin="35,0,0,0"><Run Text="Chat"/></TextBlock>
+                        <ToggleButton x:Name="ToggleButtonOpenMenu1" Style="{DynamicResource MaterialDesignHamburgerToggleButton}" Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}" CommandParameter="{x:Static Dock.Right}" Height="30" Width="30" VerticalAlignment="Top" HorizontalAlignment="Right" Checked="ToggleButtonOpenMenu1_Checked" />
+                        <TextBlock x:Name="DownloadData" Style="{StaticResource MaterialDesignHeadline2TextBlock}" HorizontalAlignment="Left" TextAlignment="Left" FontSize="12" Height="18" VerticalAlignment="Top" Margin="0,40,0,0" PreviewMouseLeftButtonUp="DownloadData_PreviewMouseLeftButtonUp"><Run Text="Streaming speed: 0 Bps 0 ms"/></TextBlock>
+                    </Grid>
+
+                    <ScrollViewer x:Name="ScrollChatBox" Grid.Row="1" VerticalAlignment="Stretch" CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                        <Grid x:Name="ChatBoxContainer"/>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="2" x:Name="ResponseContainer" Background="#0d151f" RenderTransformOrigin="0.5,0.5" Height="0" VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Name="Arrow" Grid.Column="0" Foreground="{StaticResource SecondaryColorMessage}" Margin="5,8,5,0" Height="30" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Kind="Share" RenderTransformOrigin="0.5,0.5" >
+                            <materialDesign:PackIcon.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleY="1" ScaleX="-1"/>
+                                </TransformGroup>
+                            </materialDesign:PackIcon.RenderTransform>
+                        </materialDesign:PackIcon>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="ResponseNickName" Grid.Row="0" Text="Testo di prova" Foreground="{StaticResource SecondaryColorMessage}" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Margin="10,6,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="13" />
+                            <TextBlock x:Name="ResponseMessage" Grid.Row="1" Text="Testo di prova" MaxWidth="232" FontFamily="Calibri Light" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="14" />
+                        </Grid>
+                        <Button x:Name="CloseResponse" Grid.Column="2" Foreground="#737e87" Padding="0" materialDesign:RippleAssist.Feedback="#232e3c" materialDesign:ButtonAssist.CornerRadius="20" Style="{StaticResource MyButton}" ToolTip="MaterialDesignFlatButton" Width="40" Height="40" Margin="5,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" MouseEnter="CloseResponse_MouseEnter" MouseLeave="CloseResponse_MouseLeave" Click="CloseResponse_Click">
+                            <materialDesign:PackIcon Kind="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" Height="20" Width="20" />
+                        </Button>
+                    </Grid>
+
+                    <Grid Name="LinkStreamContainer" Grid.Row="3" Height="0" Background="#0d151f">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0" Background="#0d151f" Height="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Name="TitleGrid" Height="0" Grid.Row="0">
+                                        <TextBlock Name="TitleVideo" Text="La Casa di Carta" Opacity="0" Foreground="#2f6ea5" Margin="5,0,0,0" FontStyle="Italic" FontWeight="DemiBold" Style="{StaticResource MaterialDesignHeadline2TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="19" />
+                                    </Grid>
+                                    <Grid Name="InfoTxtGrid" Height="20" Grid.Row="1">
+                                        <TextBlock Name="TextLink" Text="Select a movie" Opacity="1" Margin="5,0,0,0" Foreground="#FFFFFF" FontWeight="DemiBold" Style="{StaticResource MaterialDesignHeadline2TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" />
+                                    </Grid>
+                                </Grid>
+                                
+                                <Grid Name="SeasonEpisodeGrid" Grid.Column="1" Width="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="7,0,0,6">
+                                    <TextBlock Name="SeasonEpisondeTxt" Text="S. 10 Ep. 22" Foreground="#FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="12" Style="{StaticResource MaterialDesignHeadline2TextBlock}"/>
+                                </Grid>
+                            </Grid>
+                            
+                            <Grid Name="CollectingLabelContainer" Grid.Column="1" Width="0">
+                                <TextBlock Text="Colletting stream links..." Foreground="#FFFFFF" Style="{StaticResource MaterialDesignHeadline2TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="11" />
+                            </Grid>
+                            
+                            <ProgressBar x:Name="ProgressFilmLink" Grid.Column="2" Visibility="Visible" Foreground="#2f6ea5" Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="False" Height="25" Width="25" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+
+                            <Grid Name="MiniControllPanellGrid" Grid.Column="3" Width="0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Name="StopSeries" Grid.Column="0" Foreground="#737e87" Margin="0,0,2,0" Padding="0" RenderTransformOrigin="0.5, 0.5" materialDesign:RippleAssist.Feedback="#232e3c" materialDesign:ButtonAssist.CornerRadius="20" Style="{StaticResource MyButton}" ToolTip="MaterialDesignFlatButton" Width="30" Height="30" MouseEnter="StopSeries_MouseEnter" MouseLeave="StopSeries_MouseLeave" Click="StopSeries_Click">
+                                    <materialDesign:PackIcon Kind="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15" Width="15" />
+                                </Button>
+                                <Button Name="SkippEpisode" Grid.Column="1" Foreground="#737e87" Margin="0,0,0,0" Padding="0" RenderTransformOrigin="0.5, 0.5" materialDesign:RippleAssist.Feedback="#232e3c" materialDesign:ButtonAssist.CornerRadius="20" Style="{StaticResource MyButton}" ToolTip="MaterialDesignFlatButton" Width="30" Height="30" MouseEnter="SkippEpisode_MouseEnter" MouseLeave="SkippEpisode_MouseLeave" Click="SkippEpisode_Click">
+                                    <materialDesign:PackIcon Kind="SkipForward" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15" Width="15" />
+                                </Button>
+                            </Grid>
+
+                            <Button Name="CloseLinks" Grid.Column="4" Foreground="#737e87" Padding="0" RenderTransformOrigin="0.5, 0.5" materialDesign:RippleAssist.Feedback="#232e3c" materialDesign:ButtonAssist.CornerRadius="20" Style="{StaticResource MyButton}" ToolTip="MaterialDesignFlatButton" Width="30" Height="30" Margin="5,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" MouseEnter="CloseLinks_MouseEnter" MouseLeave="CloseLinks_MouseLeave" Click="CloseLinks_Click">
+                                <materialDesign:PackIcon Name="IconCloseLinks" Kind="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15" Width="15" />
+                            </Button>
+                        </Grid>
+                        <ScrollViewer x:Name="ScrollLinkList" Grid.Row="1" VerticalAlignment="Stretch" CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                            <Grid Name="LinkStream"/>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <Grid Name="isWriting" Grid.Row="4" Height="0" Background="#0d151f">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition  Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Margin="6,0,0,0" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Left" Height="8" Width="22">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle x:Name="rectangle8" Grid.Column="0" Fill="{StaticResource SecondaryColorMessage}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="4" Width="4" RadiusX="100" RadiusY="100" />
+                            <Rectangle x:Name="rectangle9" Grid.Column="1" Fill="{StaticResource SecondaryColorMessage}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="4" Width="4" RadiusX="100" RadiusY="100" />
+                            <Rectangle x:Name="rectangle10" Grid.Column="2" Fill="{StaticResource SecondaryColorMessage}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="4" Width="4" RadiusX="100" RadiusY="100" />
+                        </Grid>
+
+                        <TextBlock Name="TypingUser" Grid.Column="1" Text="People is writing..." Margin="5,0,0,0" Style="{StaticResource MaterialDesignHeadline2TextBlock}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource SecondaryColorMessage}"/>
+                    </Grid>
+
+                    <TextBox x:Name="SendText" Grid.Row="5" Style="{StaticResource MaterialDesignNewFilledTextFieldTextBox}" VerticalScrollBarVisibility="Auto" FontFamily="Calibri Light" CaretBrush="White" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource SecondaryColorMessage}" materialDesign:HintAssist.Foreground="White" materialDesign:TextFieldAssist.TextFieldCornerRadius="0" Foreground="White" FontSize="15" AcceptsReturn="False" MaxLines="3" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Type a message" VerticalAlignment="Bottom" SelectionBrush="#FF212121" KeyDown="SendText_KeyDown" TextChanged="SendText_TextChanged" />
+                    <WebBrowser Name="Web1" Grid.Row="6" Visibility="Hidden"/>
+                </Grid>
+
+
+            </materialDesign:Card>
+
+
+        </Grid>
+    </materialDesign:DrawerHost>
+
+</Window>

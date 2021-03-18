@@ -1,0 +1,50 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- determine native library reference -->
+    <PropertyGroup Condition=" '$(Prefer32Bit)' == 'true' and '$(SolAnyCPUPreferedNative)'==''">
+        <SolAnyCPUPreferedNative>x86</SolAnyCPUPreferedNative>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Prefer32Bit)' == 'false' and '$(SolAnyCPUPreferedNative)'==''">
+        <SolAnyCPUPreferedNative>x64</SolAnyCPUPreferedNative>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Prefer32Bit)' == '' and '$(SolAnyCPUPreferedNative)'==''">
+        <SolAnyCPUPreferedNative>x64</SolAnyCPUPreferedNative>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SolAnyCPUPreferedNative)'==''">
+        <SolAnyCPUPreferedNative>x64</SolAnyCPUPreferedNative>
+    </PropertyGroup>
+    <!-- validate native library target -->
+    <Target Name="ValidateNativeLib" AfterTargets="Build">  
+        <Error  
+            Text="The SolAnyCPUPreferedNative property must be set to 'x86' or 'x64'."  
+            Condition="'$(SolAnyCPUPreferedNative)'!='x64' and '$(SolAnyCPUPreferedNative)'!='x86' and '$(Platform)' == 'AnyCPU' " />  
+        <Warning  
+            Text="The SolAnyCPUPreferedNative property was set to 'x64' when Prefer32Bit flag is true this may cause dll compatibility issues at runtime."
+            Condition=" '$(Prefer32Bit)' == 'true' and '$(SolAnyCPUPreferedNative)' == 'x64' and '$(Platform)' == 'AnyCPU' " />
+    </Target> 
+    <!-- Select native library reference -->
+	<PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+		<NugetPlatform>win-$(SolAnyCPUPreferedNative)</NugetPlatform>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Platform)' == 'x64' ">
+		<NugetPlatform>win-x64</NugetPlatform>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+		<NugetPlatform>win-x86</NugetPlatform>
+	</PropertyGroup>
+    <!-- include native library into project output directory -->
+    <ItemGroup>
+        <SolaceLib Include="$(MSBuildThisFileDirectory)..\..\lib\net20\$(NugetPlatform)\*.dll" />
+        <None Include="@(SolaceLib)">
+            <Link>%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <SolaceClientLibs Include="$(MSBuildThisFileDirectory)$(NugetPlatform)\*.dll" />
+        <None Include="@(SolaceClientLibs)">
+            <Link>%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+</Project>
+
